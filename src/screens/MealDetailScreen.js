@@ -1,30 +1,85 @@
-import {
-	Button,
-	Image,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MEALS } from '../data/dummy-data';
 import { IconButton, List, MealDetails, Subtitle } from '../components';
 import { useContext, useLayoutEffect } from 'react';
-import { FavoritesContext } from '../store/context/favorites-context';
+// import { FavoritesContext } from '../store/context/favorites-context';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	addFavorite,
+	removeFavorite,
+} from '../store/redux/favoritesSlice.slice';
 
+// Function using Context Api
+// export const MealDetailScreen = ({ navigation, route }) => {
+// 	const favoriteMealsContext = useContext(FavoritesContext);
+
+// 	const mealId = route.params.mealId;
+
+// 	const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+
+// 	const mealIsFavorite = favoriteMealsContext.ids.includes(mealId);
+
+// 	const changeFavoritesStatusHandler = () => {
+// 		if (mealIsFavorite) {
+// 			return favoriteMealsContext.removeFavorite(mealId);
+// 		}
+// 		return favoriteMealsContext.addFavorite(mealId);
+// 	};
+
+// 	useLayoutEffect(() => {
+// 		navigation.setOptions({
+// 			headerRight: () => {
+// 				return (
+// 					<IconButton
+// 						icon={mealIsFavorite ? 'star' : 'star-outline'}
+// 						color='white'
+// 						onPress={changeFavoritesStatusHandler}
+// 					/>
+// 				);
+// 			},
+// 		});
+// 	}, [changeFavoritesStatusHandler, navigation]);
+
+// 	return (
+// 		<ScrollView style={styles.rootContainer}>
+// 			<Image source={{ uri: selectedMeal.imageUrl }} style={styles.image} />
+// 			<Text style={styles.title}>This is the meal detail {mealId}</Text>
+// 			<MealDetails
+// 				duration={selectedMeal.duration}
+// 				complexity={selectedMeal.complexity}
+// 				affordability={selectedMeal.affordability}
+// 				textStyle={styles.detailText}
+// 			/>
+// 			<View style={styles.listOuterContainer}>
+// 				<View style={styles.listContainer}>
+// 					<Subtitle>Ingredients</Subtitle>
+// 					<List data={selectedMeal.ingredients} />
+// 					<Subtitle>Steps</Subtitle>
+// 					<List data={selectedMeal.steps} />
+// 				</View>
+// 			</View>
+// 		</ScrollView>
+// 	);
+// };
+
+// Function using Redux Toolkit
 export const MealDetailScreen = ({ navigation, route }) => {
-	const favoriteMealsContext = useContext(FavoritesContext);
+	const favoriteMealIds = useSelector((state) => state.favoriteMeals?.ids);
+
+	const dispatch = useDispatch();
 
 	const mealId = route.params.mealId;
 
-	const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+	const selectedMeal = MEALS?.find((meal) => meal?.id === mealId);
 
-	const mealIsFavorite = favoriteMealsContext.ids.includes(mealId);
+	const mealIsFavorite = favoriteMealIds?.includes(mealId);
 
 	const changeFavoritesStatusHandler = () => {
 		if (mealIsFavorite) {
-			return favoriteMealsContext.removeFavorite(mealId);
+			dispatch(removeFavorite({ id: mealId }));
+		} else {
+			dispatch(addFavorite({ id: mealId }));
 		}
-		return favoriteMealsContext.addFavorite(mealId);
 	};
 
 	useLayoutEffect(() => {

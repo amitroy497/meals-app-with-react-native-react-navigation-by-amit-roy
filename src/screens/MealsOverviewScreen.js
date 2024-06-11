@@ -7,7 +7,7 @@ export const MealsOverviewScreen = ({ navigation, route }) => {
 	const catId = route.params.categoryId;
 
 	const displayedMeals = MEALS?.filter((mealItem) => {
-		return mealItem?.categoryIds.indexOf(catId) !== -1;
+		return mealItem?.categoryIds?.indexOf(catId) !== -1;
 	});
 
 	useLayoutEffect(() => {
