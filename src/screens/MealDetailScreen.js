@@ -8,15 +8,23 @@ import {
 } from 'react-native';
 import { MEALS } from '../data/dummy-data';
 import { IconButton, List, MealDetails, Subtitle } from '../components';
-import { useLayoutEffect } from 'react';
+import { useContext, useLayoutEffect } from 'react';
+import { FavoritesContext } from '../store/context/favorites-context';
 
 export const MealDetailScreen = ({ navigation, route }) => {
+	const favoriteMealsContext = useContext(FavoritesContext);
+
 	const mealId = route.params.mealId;
 
 	const selectedMeal = MEALS.find((meal) => meal.id === mealId);
 
-	const headerButtonPressHandler = () => {
-		console.log('Pressed!');
+	const mealIsFavorite = favoriteMealsContext.ids.includes(mealId);
+
+	const changeFavoritesStatusHandler = () => {
+		if (mealIsFavorite) {
+			return favoriteMealsContext.removeFavorite(mealId);
+		}
+		return favoriteMealsContext.addFavorite(mealId);
 	};
 
 	useLayoutEffect(() => {
@@ -24,14 +32,14 @@ export const MealDetailScreen = ({ navigation, route }) => {
 			headerRight: () => {
 				return (
 					<IconButton
-						icon='star'
+						icon={mealIsFavorite ? 'star' : 'star-outline'}
 						color='white'
-						onPress={headerButtonPressHandler}
+						onPress={changeFavoritesStatusHandler}
 					/>
 				);
 			},
 		});
-	}, [headerButtonPressHandler, navigation]);
+	}, [changeFavoritesStatusHandler, navigation]);
 
 	return (
 		<ScrollView style={styles.rootContainer}>
